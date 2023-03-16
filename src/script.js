@@ -117,3 +117,47 @@ document.getElementById("saveScore").addEventListener("click", () => {
     $("#nameModal").modal("hide");
   }
 });
+
+let touchStartX = null;
+let touchStartY = null;
+
+function handleTouchStart(e) {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (!touchStartX || !touchStartY) {
+    return;
+  }
+
+  const touchEndX = e.touches[0].clientX;
+  const touchEndY = e.touches[0].clientY;
+
+  const diffX = touchStartX - touchEndX;
+  const diffY = touchStartY - touchEndY;
+
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    // Horizontal swipe
+    if (diffX > 0 && direction.x === 0) {
+      newDirection = { x: -1, y: 0 }; // Swipe left
+    } else if (diffX < 0 && direction.x === 0) {
+      newDirection = { x: 1, y: 0 }; // Swipe right
+    }
+  } else {
+    // Vertical swipe
+    if (diffY > 0 && direction.y === 0) {
+      newDirection = { x: 0, y: -1 }; // Swipe up
+    } else if (diffY < 0 && direction.y === 0) {
+      newDirection = { x: 0, y: 1 }; // Swipe down
+    }
+  }
+
+  // Reset touch coordinates
+  touchStartX = null;
+  touchStartY = null;
+}
+
+gameBoard.addEventListener("touchstart", handleTouchStart);
+gameBoard.addEventListener("touchmove", handleTouchMove);
